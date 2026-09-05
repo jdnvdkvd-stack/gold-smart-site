@@ -1,3 +1,1333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Gold Analysis</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#080d19;
+    color:#fff;
+    min-height:100vh;
+}
+
+header{
+    text-align:center;
+    padding:22px 15px;
+    background:linear-gradient(135deg,#151d38,#080d19);
+    border-bottom:1px solid #293250;
+}
+
+header h1{
+    color:#ffd54a;
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+header p{
+    color:#9faac4;
+}
+
+.container{
+    width:94%;
+    max-width:1150px;
+    margin:20px auto;
+}
+
+.live{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-top:10px;
+    padding:7px 13px;
+    border-radius:20px;
+    background:#102619;
+    color:#22c55e;
+    font-size:13px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 10px #22c55e;
+}
+
+.price-card{
+    background:#11182b;
+    border:1px solid #293250;
+    border-radius:18px;
+    padding:23px;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.label{
+    color:#9faac4;
+    font-size:14px;
+}
+
+.price{
+    font-size:43px;
+    color:#ffd54a;
+    font-weight:bold;
+    margin:10px 0;
+}
+
+.price-change{
+    font-size:15px;
+    color:#9faac4;
+}
+
+.frames{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.frames button{
+    border:1px solid #394463;
+    background:#11182b;
+    color:#fff;
+    padding:13px 5px;
+    border-radius:11px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.frames button.active{
+    background:#ffd54a;
+    color:#111;
+    border-color:#ffd54a;
+}
+
+.status{
+    background:#11182b;
+    border:1px solid #293250;
+    padding:12px;
+    border-radius:12px;
+    text-align:center;
+    margin-bottom:15px;
+    color:#9faac4;
+    font-size:13px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.card{
+    background:#11182b;
+    border:1px solid #293250;
+    border-radius:17px;
+    padding:18px;
+}
+
+.card.full{
+    grid-column:1/-1;
+}
+
+.card h2{
+    color:#ffd54a;
+    font-size:19px;
+    margin-bottom:13px;
+}
+
+.signal{
+    text-align:center;
+    font-size:32px;
+    font-weight:bold;
+    padding:17px 5px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid #242d45;
+}
+
+.row:last-child{
+    border-bottom:0;
+}
+
+.value{
+    font-weight:bold;
+}
+
+.green{
+    color:#22c55e;
+}
+
+.red{
+    color:#ef4444;
+}
+
+.yellow{
+    color:#ffd54a;
+}
+
+.gray{
+    color:#aeb8d0;
+}
+
+.percent-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+}
+
+.percent{
+    padding:14px;
+    border-radius:12px;
+    text-align:center;
+    background:#0c1323;
+}
+
+.percent strong{
+    display:block;
+    font-size:22px;
+    margin-top:5px;
+}
+
+.buy{
+    border:1px solid #14532d;
+}
+
+.sell{
+    border:1px solid #7f1d1d;
+}
+
+.score{
+    margin-top:15px;
+    background:#0c1323;
+    border-radius:13px;
+    padding:15px;
+    text-align:center;
+}
+
+.score-number{
+    font-size:35px;
+    font-weight:bold;
+    color:#ffd54a;
+    margin-top:5px;
+}
+
+.trade-box{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+}
+
+.trade-item{
+    background:#0c1323;
+    border-radius:11px;
+    padding:12px 5px;
+    text-align:center;
+}
+
+.trade-item span{
+    display:block;
+    color:#9faac4;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.trade-item strong{
+    font-size:15px;
+}
+
+.quality{
+    text-align:center;
+    font-size:22px;
+    padding:12px;
+}
+
+.decision{
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    padding:12px;
+}
+
+.chart{
+    height:390px;
+    position:relative;
+    overflow:hidden;
+    border-radius:12px;
+    background:#0a1020;
+}
+
+canvas{
+    width:100%;
+    height:100%;
+}
+
+.backtest{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.bt{
+    background:#0c1323;
+    border-radius:12px;
+    padding:14px;
+    text-align:center;
+}
+
+.bt span{
+    display:block;
+    color:#9faac4;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.bt strong{
+    font-size:20px;
+}
+
+.history{
+    overflow-x:auto;
+}
+
+.history table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:500px;
+}
+
+.history th,
+.history td{
+    padding:11px;
+    border-bottom:1px solid #293250;
+    text-align:center;
+}
+
+.history th{
+    color:#ffd54a;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:#69748e;
+    font-size:12px;
+}
+
+@media(max-width:700px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .card.full{
+        grid-column:auto;
+    }
+
+    .frames{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .trade-box{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .backtest{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .price{
+        font-size:34px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>🥇 Smart Gold Analysis</h1>
+
+<p>XAU/USD — تحليل ذكي متعدد الفريمات</p>
+
+<div class="live">
+    <span class="dot"></span>
+    LIVE MARKET
+</div>
+
+</header>
+
+
+<div class="container">
+
+<!-- PRICE -->
+
+<div class="price-card">
+
+<div class="label">
+    السعر الحالي XAU/USD
+</div>
+
+<div class="price" id="price">
+    ----
+</div>
+
+<div class="price-change" id="lastUpdate">
+    جاري الاتصال بالسوق...
+</div>
+
+</div>
+
+
+<!-- TIMEFRAMES -->
+
+<div class="frames">
+
+<button class="active" onclick="setFrame('1min',this)">
+    M1
+</button>
+
+<button onclick="setFrame('5min',this)">
+    M5
+</button>
+
+<button onclick="setFrame('15min',this)">
+    M15
+</button>
+
+<button onclick="setFrame('30min',this)">
+    M30
+</button>
+
+<button onclick="setFrame('1h',this)">
+    H1
+</button>
+
+</div>
+
+
+<div class="status" id="status">
+    ⏳ جاري تحميل بيانات الذهب الحقيقية...
+</div>
+
+
+<div class="grid">
+
+
+<!-- SIGNAL -->
+
+<div class="card">
+
+<h2>📌 الإشارة</h2>
+
+<div class="signal" id="signal">
+    ⏳ تحليل...
+</div>
+
+<div class="row">
+    <span>🎯 الاتجاه</span>
+    <span class="value" id="trend">---</span>
+</div>
+
+<div class="row">
+    <span>⚡ قوة الحركة</span>
+    <span class="value" id="momentum">---</span>
+</div>
+
+<div class="row">
+    <span>💥 الاختراق</span>
+    <span class="value" id="breakout">---</span>
+</div>
+
+<div class="row">
+    <span>🔄 إعادة الاختبار</span>
+    <span class="value" id="retest">---</span>
+</div>
+
+<div class="row">
+    <span>🕯️ تأكيد الشمعة</span>
+    <span class="value" id="candle">---</span>
+</div>
+
+<div class="row">
+    <span>💧 السيولة</span>
+    <span class="value" id="liquidity">---</span>
+</div>
+
+</div>
+
+
+<!-- INDICATORS -->
+
+<div class="card">
+
+<h2>📊 المؤشرات</h2>
+
+<div class="row">
+    <span>💰 السعر</span>
+    <span class="value yellow" id="indicatorPrice">---</span>
+</div>
+
+<div class="row">
+    <span>EMA 20</span>
+    <span class="value" id="ema20">---</span>
+</div>
+
+<div class="row">
+    <span>EMA 50</span>
+    <span class="value" id="ema50">---</span>
+</div>
+
+<div class="row">
+    <span>RSI 14</span>
+    <span class="value yellow" id="rsi">---</span>
+</div>
+
+<div class="row">
+    <span>🧱 المقاومة</span>
+    <span class="value red" id="resistance">---</span>
+</div>
+
+<div class="row">
+    <span>🧱 الدعم</span>
+    <span class="value green" id="support">---</span>
+</div>
+
+</div>
+
+
+<!-- STRENGTH -->
+
+<div class="card">
+
+<h2>💪 قوة السوق</h2>
+
+<div class="percent-box">
+
+<div class="percent buy">
+    🟢 قوة الشراء
+    <strong class="green" id="buyPercent">0%</strong>
+</div>
+
+<div class="percent sell">
+    🔴 قوة البيع
+    <strong class="red" id="sellPercent">0%</strong>
+</div>
+
+</div>
+
+<div class="score">
+
+🎯 قوة الإشارة
+
+<div class="score-number" id="signalStrength">
+    0 / 100
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MULTI TIMEFRAME -->
+
+<div class="card">
+
+<h2>⏱️ تحليل الفريمات</h2>
+
+<div class="row">
+    <span>📊 H1</span>
+    <span class="value" id="h1">---</span>
+</div>
+
+<div class="row">
+    <span>📊 M15</span>
+    <span class="value" id="m15">---</span>
+</div>
+
+<div class="row">
+    <span>📊 M5</span>
+    <span class="value" id="m5">---</span>
+</div>
+
+</div>
+
+
+<!-- ENTRY -->
+
+<div class="card full">
+
+<h2>🎯 Entry / SL / Take Profit</h2>
+
+<div class="trade-box">
+
+<div class="trade-item">
+    <span>📍 Entry</span>
+    <strong id="entry">---</strong>
+</div>
+
+<div class="trade-item">
+    <span>🛑 SL</span>
+    <strong class="red" id="sl">---</strong>
+</div>
+
+<div class="trade-item">
+    <span>🎯 TP1</span>
+    <strong class="green" id="tp1">---</strong>
+</div>
+
+<div class="trade-item">
+    <span>🎯 TP2</span>
+    <strong class="green" id="tp2">---</strong>
+</div>
+
+<div class="trade-item">
+    <span>🎯 TP3</span>
+    <strong class="green" id="tp3">---</strong>
+</div>
+
+</div>
+
+<div class="trade-box" style="margin-top:8px">
+
+<div class="trade-item">
+    <span>🎯 TP4</span>
+    <strong class="green" id="tp4">---</strong>
+</div>
+
+<div class="trade-item">
+    <span>📈 متوسط الربح</span>
+    <strong class="green">+1.8R</strong>
+</div>
+
+<div class="trade-item">
+    <span>📉 متوسط الخسارة</span>
+    <strong class="red">-1.0R</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- QUALITY -->
+
+<div class="card">
+
+<h2>🚦 جودة الإشارة</h2>
+
+<div class="quality" id="quality">
+    ---
+</div>
+
+<div class="decision" id="decision">
+    ---
+</div>
+
+</div>
+
+
+<!-- EXPECTATION -->
+
+<div class="card">
+
+<h2>🔮 توقع الحركة</h2>
+
+<div class="row">
+    <span>بعد 15 دقيقة</span>
+    <span class="value" id="future15">---</span>
+</div>
+
+<div class="row">
+    <span>السعر المتوقع</span>
+    <span class="value" id="future15Price">---</span>
+</div>
+
+<div class="row">
+    <span>بعد 30 دقيقة</span>
+    <span class="value" id="future30">---</span>
+</div>
+
+<div class="row">
+    <span>السعر المتوقع</span>
+    <span class="value" id="future30Price">---</span>
+</div>
+
+</div>
+
+
+<!-- CHART -->
+
+<div class="card full">
+
+<h2>🕯️ الرسم البياني الحقيقي</h2>
+
+<div class="chart">
+    <canvas id="chart"></canvas>
+</div>
+
+</div>
+
+
+<!-- FORWARD TEST -->
+
+<div class="card full">
+
+<h2>📈 FORWARD TEST — PAPER</h2>
+
+<div class="backtest">
+
+<div class="bt">
+    <span>🟢 الصفقات الرابحة</span>
+    <strong class="green" id="wins">0</strong>
+</div>
+
+<div class="bt">
+    <span>🔴 الصفقات الخاسرة</span>
+    <strong class="red" id="losses">0</strong>
+</div>
+
+<div class="bt">
+    <span>📊 نسبة النجاح</span>
+    <strong class="yellow" id="accuracy">0%</strong>
+</div>
+
+<div class="bt">
+    <span>📉 Drawdown</span>
+    <strong id="drawdown">0%</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- HISTORY -->
+
+<div class="card full">
+
+<h2>📋 سجل الإشارات</h2>
+
+<div class="history">
+
+<table>
+
+<thead>
+
+<tr>
+<th>الوقت</th>
+<th>الإشارة</th>
+<th>النتيجة</th>
+</tr>
+
+</thead>
+
+<tbody id="history">
+
+<tr>
+<td colspan="3">
+    لا توجد إشارات بعد
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<footer>
+⚠️ التحليل احتمالي وليس ضمانًا للربح. الاختبار الورقي لا يمثل تنفيذًا حقيقيًا.
+</footer>
+
+
+<script>
+
+/*
+==================================================
+SMART GOLD ANALYSIS
+نفس منطق البوت الأساسي
+==================================================
+*/
+
+let currentFrame = "15min";
+
+let candles = [];
+
+let previousPrice = null;
+
+let signalHistory = [];
+
+let paperTrades = [];
+
+const API_URL = "/api/gold";
+
+
+/* =========================
+   FRAME
+========================= */
+
+function setFrame(frame, button){
+
+    currentFrame = frame;
+
+    document
+    .querySelectorAll(".frames button")
+    .forEach(b => b.classList.remove("active"));
+
+    button.classList.add("active");
+
+    loadMarket();
+}
+
+
+/* =========================
+   API
+========================= */
+
+async function loadMarket(){
+
+    setStatus("⏳ جاري تحميل بيانات XAU/USD الحقيقية...");
+
+    try{
+
+        const response = await fetch(
+            API_URL +
+            "?symbol=XAU/USD&interval=" +
+            currentFrame +
+            "&outputsize=100"
+        );
+
+        if(!response.ok){
+            throw new Error("API ERROR");
+        }
+
+        const data = await response.json();
+
+        if(!data.values || data.values.length < 55){
+            throw new Error("بيانات غير كافية");
+        }
+
+        candles = data.values
+            .map(c => ({
+                datetime:c.datetime,
+                open:Number(c.open),
+                high:Number(c.high),
+                low:Number(c.low),
+                close:Number(c.close)
+            }))
+            .reverse();
+
+        analyze();
+
+        setStatus(
+            "🟢 متصل — بيانات XAU/USD حقيقية"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        setStatus(
+            "🔴 تعذر جلب البيانات الحقيقية"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   RSI
+========================= */
+
+function calculateRSI(prices, period=14){
+
+    if(prices.length < period + 1)
+        return 50;
+
+    let gains = 0;
+    let losses = 0;
+
+    for(
+        let i=prices.length-period;
+        i<prices.length;
+        i++
+    ){
+
+        const change =
+            prices[i] - prices[i-1];
+
+        if(change > 0)
+            gains += change;
+
+        else
+            losses += Math.abs(change);
+
+    }
+
+    const avgGain = gains / period;
+    const avgLoss = losses / period;
+
+    if(avgLoss === 0)
+        return 100;
+
+    const rs =
+        avgGain / avgLoss;
+
+    return 100 -
+        (100 / (1 + rs));
+}
+
+
+/* =========================
+   EMA
+========================= */
+
+function calculateEMA(prices, period){
+
+    if(prices.length < period)
+        return null;
+
+    let sum = 0;
+
+    for(let i=0;i<period;i++)
+        sum += prices[i];
+
+    let ema = sum / period;
+
+    const multiplier =
+        2 / (period + 1);
+
+    for(
+        let i=period;
+        i<prices.length;
+        i++
+    ){
+
+        ema =
+            (prices[i]-ema) *
+            multiplier +
+            ema;
+
+    }
+
+    return ema;
+}
+
+
+/* =========================
+   CANDLE ANALYSIS
+========================= */
+
+function analyzeCandles(data){
+
+    if(data.length < 55)
+        return null;
+
+    const closes =
+        data.map(c => c.close);
+
+    const last =
+        data[data.length-1];
+
+    const price =
+        last.close;
+
+    const ema20 =
+        calculateEMA(closes,20);
+
+    const ema50 =
+        calculateEMA(closes,50);
+
+    const rsi =
+        calculateRSI(closes,14);
+
+    let buyScore = 0;
+    let sellScore = 0;
+
+    const bullish =
+        last.close > last.open;
+
+    const bearish =
+        last.close < last.open;
+
+    const trendUp =
+        closes[closes.length-1] >
+        closes[closes.length-5];
+
+    const trendDown =
+        closes[closes.length-1] <
+        closes[closes.length-5];
+
+
+    if(ema20 > ema50)
+        buyScore++;
+
+    else
+        sellScore++;
+
+
+    if(price > ema20)
+        buyScore++;
+
+    else
+        sellScore++;
+
+
+    if(rsi > 50 && rsi < 70)
+        buyScore++;
+
+    else if(rsi > 30 && rsi < 50)
+        sellScore++;
+
+    else if(rsi >= 70)
+        sellScore++;
+
+    else if(rsi <= 30)
+        buyScore++;
+
+
+    if(bullish)
+        buyScore++;
+
+    else if(bearish)
+        sellScore++;
+
+
+    if(trendUp)
+        buyScore++;
+
+    else if(trendDown)
+        sellScore++;
+
+
+    const direction =
+        buyScore >= sellScore
+        ? "BUY"
+        : "SELL";
+
+
+    return {
+        direction,
+        price,
+        ema20,
+        ema50,
+        rsi,
+        buyScore,
+        sellScore
+    };
+
+}
+
+
+/* =========================
+   MOMENTUM
+========================= */
+
+function calculateMomentum(data){
+
+    if(data.length < 10)
+        return "ضعيفة";
+
+    const movement =
+        data[data.length-1].close -
+        data[data.length-6].close;
+
+    let range = 0;
+
+    for(
+        let i=data.length-10;
+        i<data.length;
+        i++
+    ){
+
+        range +=
+            Math.abs(
+                data[i].high -
+                data[i].low
+            );
+
+    }
+
+    const averageRange =
+        range / 10;
+
+    if(averageRange === 0)
+        return "ضعيفة";
+
+    const strength =
+        Math.abs(movement) /
+        averageRange;
+
+    if(strength >= 1.2)
+        return "قوية";
+
+    if(strength >= 0.6)
+        return "متوسطة";
+
+    return "ضعيفة";
+
+}
+
+
+/* =========================
+   TIMEFRAME
+========================= */
+
+function timeframeDirection(data){
+
+    if(data.length < 55)
+        return "محايد";
+
+    const closes =
+        data.map(c => c.close);
+
+    const ema20 =
+        calculateEMA(closes,20);
+
+    const ema50 =
+        calculateEMA(closes,50);
+
+    const close =
+        closes[closes.length-1];
+
+    if(
+        ema20 > ema50 &&
+        close > ema20
+    )
+        return "صاعد";
+
+    if(
+        ema20 < ema50 &&
+        close < ema20
+    )
+        return "نازل";
+
+    return "محايد";
+
+}
+
+
+/* =========================
+   BREAKOUT
+========================= */
+
+function breakoutStatus(data,direction){
+
+    if(data.length < 25)
+        return "غير مؤكد";
+
+    const previous =
+        data.slice(
+            data.length-21,
+            data.length-1
+        );
+
+    const previousHigh =
+        Math.max(...previous.map(c=>c.high));
+
+    const previousLow =
+        Math.min(...previous.map(c=>c.low));
+
+    const price =
+        data[data.length-1].close;
+
+    if(
+        direction === "BUY" &&
+        price > previousHigh
+    )
+        return "مؤكد";
+
+    if(
+        direction === "SELL" &&
+        price < previousLow
+    )
+        return "مؤكد";
+
+    return "غير مؤكد";
+
+}
+
+
+/* =========================
+   RETEST
+========================= */
+
+function retestStatus(data,direction){
+
+    if(data.length < 30)
+        return "غير مؤكدة";
+
+    const recent =
+        data.slice(-8);
+
+    const old =
+        data.slice(
+            data.length-25,
+            data.length-8
+        );
+
+    const resistance =
+        Math.max(...old.map(c=>c.high));
+
+    const support =
+        Math.min(...old.map(c=>c.low));
+
+    if(direction === "BUY"){
+
+        for(const c of recent){
+
+            if(
+                c.low <= resistance &&
+                c.close > resistance
+            )
+                return "ناجحة";
+
+        }
+
+    }else{
+
+        for(const c of recent){
+
+            if(
+                c.high >= support &&
+                c.close < support
+            )
+                return "ناجحة";
+
+        }
+
+    }
+
+    return "غير مؤكدة";
+
+}
+
+
+/* =========================
+   CANDLE CONFIRMATION
+========================= */
+
+function candleConfirmation(data,direction){
+
+    const c =
+        data[data.length-1];
+
+    const body =
+        Math.abs(c.close-c.open);
+
+    const range =
+        c.high-c.low;
+
+    if(range === 0)
+        return "محايد";
+
+    const ratio =
+        body / range;
+
+    if(
+        direction === "BUY" &&
+        c.close > c.open &&
+        ratio >= 0.45
+    )
+        return "إيجابي";
+
+    if(
+        direction === "SELL" &&
+        c.close < c.open &&
+        ratio >= 0.45
+    )
+        return "إيجابي";
+
+    return "محايد";
+
+}
+
+
+/* =========================
+   LIQUIDITY
+========================= */
+
+function liquidityStatus(data,direction){
+
+    if(data.length < 20)
+        return "محايدة";
+
+    const recent =
+        data.slice(-10);
+
+    const previous =
+        data.slice(-20,-10);
+
+    const recentHigh =
+        Math.max(...recent.map(c=>c.high));
+
+    const recentLow =
+        Math.min(...recent.map(c=>c.low));
+
+    const previousHigh =
+        Math.max(...previous.map(c=>c.high));
+
+    const previousLow =
+        Math.min(...previous.map(c=>c.low));
+
+    const price =
+        data[data.length-1].close;
+
+    if(
+        direction === "BUY" &&
+        price > previousHigh
+    )
+        return "داعمة للصعود";
+
+    if(
+        direction === "SELL" &&
+        price < previousLow
+    )
+        return "داعمة للنزول";
+
+    if(
+        direction === "BUY" &&
+        price > recentLow
+    )
+        return "محايدة";
+
+    if(
+        direction === "SELL" &&
+        price < recentHigh
+    )
+        return "محايدة";
+
+    return "محايدة";
+
+}
+    
+
 function supportResistance(data){
 
     const recent = data.slice(-20);
